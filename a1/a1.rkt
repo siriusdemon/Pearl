@@ -254,3 +254,58 @@
 
 (display (set-difference '(1 2 3 4 5) '(2 4 6 8)))
 (newline)
+
+
+; 18
+(define foldl
+  (lambda (f init lst)
+    (cond
+      [(null? lst) init]
+      [else (let ([new-acc (f (car lst) init)])
+              (foldl f new-acc (cdr lst)))])))
+(display (foldl cons '() '(1 2 3 4)))
+(newline)
+
+(define foldr
+  (lambda (f init lst)
+    (cond
+      [(null? lst) init]
+      [else (f (car lst) (foldr f init (cdr lst)))])))
+  
+(display (foldr cons '() '(1 2 3 4)))
+(newline)
+(display (foldr + 0 '(1 2 3 4)))
+(newline)
+(display (foldr * 1 '(1 2 3 4)))
+(newline)
+
+; bt 19
+; init:  '() => '(())
+; n   :  cons n into (n - 1) 
+(define powerset
+  (lambda (set)
+    (cond
+      [(null? set) '(())]
+      [else (let ([rest (powerset (cdr set))])
+              (append rest (map (lambda (x) (cons (car set) x)) rest)))])))
+
+(display (powerset '()))
+(newline)
+(display (powerset '(1 2 3)))
+(newline)
+
+
+; bt 20
+; the anno is not understandable yet
+
+
+; bt 21
+; (define cartesian-product
+;   (lambda (sets)
+;     ))
+
+; (display (cartesian-product '((1 2 3))))
+; (newline)     ;  ((1) (2) (3))
+; (display (cartesian-product '((1 2 3) (a b))))
+; (newline)     ;  ((1 a) (1 b) (2 a) (2 b) (3 a) (3 b))
+

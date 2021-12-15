@@ -309,3 +309,126 @@
 ; (display (cartesian-product '((1 2 3) (a b))))
 ; (newline)     ;  ((1 a) (1 b) (2 a) (2 b) (3 a) (3 b))
 
+
+
+; bt 22
+; the light is that, foldr is high abstraction....
+; using foldr rewrite these
+(define insertR-fr
+  (lambda (s1 s2 lst)
+    (define f 
+      (lambda (s acc)
+        (if (eqv? s s1)
+            (cons s (cons s2 acc))
+            (cons s acc))))
+    (foldr f '() lst)))
+
+(display (insertR-fr 'x 'y '(x z z x y z)))
+(newline)
+;; in essence, fold function is likely a for-loop
+
+
+(define filter-fr
+  (lambda (pred lst)
+    (define f
+      (lambda (s acc)
+        (if (pred s) (cons s acc) acc)))
+    (foldr f '() lst)))
+(display (filter-fr even? '(1 2 3 4 5 6)))
+(newline)
+
+
+(define map-fr
+  (lambda (f lst)
+    (define ff
+      (lambda (s acc)
+        (cons (f s) acc)))
+    (foldr ff '() lst)))
+(display (map-fr add1 '(1 2 3 4 5 6)))
+(newline)
+
+
+(define append-fr
+  (lambda (lst1 lst2)
+    (foldr cons lst2 lst1)))
+(display (append-fr '(a b c) '(1 2 3 4 5 6)))
+(newline)
+
+
+(define reverse-fr
+  (lambda (lst)
+    (define f
+      (lambda (s acc)
+        (append acc (cons s '()))))
+    (foldr f '() lst)))
+(display (reverse-fr '(a b c 1 2 3 4 5 6)))
+(newline)
+
+(define binary->natural-fr
+  (lambda (lst)
+    (define f
+      (lambda (n acc)
+        (if (= n 0) 
+            (* 2 acc)
+            (+ 1 (* 2 acc)))))
+    (foldr f 0 lst)))
+(display (binary->natural-fr '(0 0 1)))
+(newline)
+
+
+(define append-map-fr
+  (lambda (f lst)
+    (define ff
+      (lambda (s acc)
+        (append (f s) acc)))
+    (foldr ff '() lst)))
+
+(display (append-map-fr countdown (countdown 5)))
+(newline)
+
+(define set-difference-fr
+  (lambda (set1 set2)
+    (define f
+      (lambda (s acc)
+        (if (memq s set2)
+            acc
+            (cons s acc))))
+    (foldr f '() set1)))
+(display (set-difference-fr '(1 2 3 4 5) '( 2 4 6)))
+(newline)
+
+; step1
+(define powerset-fr
+  (lambda (set)
+    (define f
+      (lambda (s acc)
+        (append acc (map (lambda (x) (cons s x)) acc))))
+    (foldr f '(()) set)))
+
+(display (powerset-fr '(1 2 3)))
+(newline)
+
+; step2
+(define powerset-fr2
+  (lambda (set)
+    (define f
+      (lambda (s acc)
+        (let ([t (map (lambda (x) (cons s x)) acc)])
+          (foldr cons acc t))))
+    (foldr f '(()) set)))
+
+; f (s acc)
+; append acc => 
+; foldr ?? acc ??
+
+; foldr cons 
+; (display (foldr cons '(1 2 3) '(1 2 3)))
+; (newline)
+(display (powerset-fr2 '(1 2 3)))
+(newline)
+
+
+; bt 23
+; (: snowball (-> Number Number))
+
+; bt quine

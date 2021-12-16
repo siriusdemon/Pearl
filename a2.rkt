@@ -233,4 +233,44 @@
 ; 11
 (define unique-free-vars
   (lambda (E)
-    ))
+    (define p
+      (lambda (e col bound)
+        (match e
+          [`(lambda (,x) ,body) (p body col (cons x bound))]   ; declare x is bound, so it is not free
+          [`(,rator ,rand) (p rator (p rand col bound) bound)]
+          [`,y (if (or (memv y col) (memv y bound)) col (cons y col))])))
+    (p E '() '())))
+
+(display (unique-free-vars 'x))
+(newline) ; (x)
+(display (unique-free-vars '(lambda (x) (x y))))
+(newline); (y)
+(display (unique-free-vars '((lambda (x) ((x y) e)) (lambda (c) (x (lambda (x) (x (e c))))))))
+(newline); (y e x)
+
+
+; 12
+(define unique-bound-vars
+  (lambda (E)
+    (define p
+      (lambda (e col bound)
+        (match e
+          [`(lambda (,x) ,body) (p body col (cons x bound))]   ; declare x is bound, so it is not free
+          [`(,rator ,rand) (p rator (p rand col bound) bound)]
+          [`,y (if (or (memv y col) (not (memv y bound))) col (cons y col))])))
+    (p E '() '())))
+
+(display (unique-bound-vars 'x))
+(newline); ()
+(display (unique-bound-vars '(lambda (x) y)))
+(newline); ()
+(display (unique-bound-vars '(lambda (x) (x y))))
+(newline); (x)
+(display (unique-bound-vars '((lambda (x) ((x y) e)) (lambda (c) (x (lambda (x) (x (e c))))))))
+(newline); (x c)
+(display (unique-bound-vars '(lambda (y) y)))
+(newline); (y)
+(display (unique-bound-vars '(lambda (x) (y z))))
+(newline); ()
+(display (unique-bound-vars '(lambda (x) (lambda (x) x))))
+(newline); (x)

@@ -300,15 +300,25 @@
 
 
 ; bt 21
-; (define cartesian-product
-;   (lambda (sets)
-;     ))
+(define cartesian-product
+  (lambda (sets)
+    (define f
+      (lambda (s acc)
+        (append-map (lambda (ss)
+                (map (lambda (a) (cons ss a)) acc))
+             s)))
+    (foldr f '(()) sets)))
 
-; (display (cartesian-product '((1 2 3))))
-; (newline)     ;  ((1) (2) (3))
-; (display (cartesian-product '((1 2 3) (a b))))
-; (newline)     ;  ((1 a) (1 b) (2 a) (2 b) (3 a) (3 b))
-
+(display "cartesian-product")
+(newline)
+(display (cartesian-product '()))
+(newline)     ;  (())
+(display (cartesian-product '((1 2 3))))
+(newline)     ;  ((1) (2) (3))
+(display (cartesian-product '((1 2 3) (a b))))
+(newline)     ;  ((1 a) (1 b) (2 a) (2 b) (3 a) (3 b))
+(display (cartesian-product '((1 2 3) (a b) (H))))
+(newline)     ;  
 
 
 ; bt 22

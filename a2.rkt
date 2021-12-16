@@ -228,3 +228,9 @@
 (newline); #f
 (display (var-occurs-bound? 'x '(lambda (x) (lambda (x) x))))
 (newline); #t
+
+
+; 11
+(define unique-free-vars
+  (lambda (E)
+    ))

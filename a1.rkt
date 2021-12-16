@@ -305,7 +305,7 @@
     (define f
       (lambda (s acc)
         (append-map (lambda (ss)
-                (map (lambda (a) (cons ss a)) acc))
+                      (map (lambda (a) (cons ss a)) acc))
              s)))
     (foldr f '(()) sets)))
 

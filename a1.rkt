@@ -1,4 +1,4 @@
-#lang racket
+#lang racket/load
 ; 1
 (define countdown 
   (lambda (n)
@@ -442,3 +442,4 @@
 ; (: snowball (-> Number Number))
 
 ; bt quine
+(display "-- end of a1 --")

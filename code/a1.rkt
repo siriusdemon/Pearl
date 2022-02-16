@@ -344,6 +344,35 @@
 
 
 ; 21
+(define snowball
+  (letrec
+      ((odd-case
+        (lambda (fix-odd)
+          (lambda (x)
+            (cond 
+              ((and (exact-integer? x) (positive? x) (odd? x)) (snowball (add1 (* x 3)))) 
+              (else (fix-odd x))))))
+       (even-case
+        (lambda (fix-even)
+          (lambda (x)
+            (cond 
+              ((and (exact-integer? x) (positive? x) (even? x)) (snowball (/ x 2))) 
+              (else (fix-even x))))))
+       (one-case
+        (lambda (fix-one)
+          (lambda (x)
+            (cond
+              ((zero? (sub1 x)) 1)
+              (else (fix-one x))))))
+       (base
+        (lambda (x)
+          (error 'error "Invalid value ~s~n" x))))
+      (one-case (odd-case (even-case base)))
+    ))
 
+(println (snowball 12))
+(println (snowball 120))
+(println (snowball 9999))
 
 ; 22
+; I don't know.

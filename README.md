@@ -1,6 +1,6 @@
 # C311 | Programming Languages
 
-HomePage: https://cgi.luddy.indiana.edu/~c311/doku.php?id=assignments
+HomePage: [C311/B521/A596](https://cgi.luddy.indiana.edu/~c311/doku.php?id=assignments)
 
 Semester: Spring 2022
 

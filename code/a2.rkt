@@ -12,11 +12,8 @@
                           (cdr (nth-cdr (- n 1)))))])
       (car (nth-cdr n)))))
 
-(display (list-ref '(a b c) 2))
-(newline)
-
-(display (list-ref '(a b c) 0))
-(newline)
+(println (list-ref '(a b c) 2))
+(println (list-ref '(a b c) 0))
 
 
 ; 2
@@ -111,6 +108,8 @@
 (display (lambda-exp? '((lambda (x) x) (lambda (x) x) (lambda (x) x))))
 (newline) ; #f
 (display (lambda-exp? '((lambda (lambda (x) x) x)  (lambda (x) x))))
+(newline) ; #f
+(display (lambda-exp? '(y x z)))
 (newline) ; #f
 
 
@@ -276,6 +275,11 @@
 (newline); ()
 (display (unique-bound-vars '(lambda (x) (lambda (x) x))))
 (newline); (x)
+
+; 13
+
+
+
 
 ; 13
 (define lex

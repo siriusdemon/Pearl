@@ -277,112 +277,99 @@
 (newline); (x)
 
 ; 13
+(define G
+  (lambda (p)
+    (lambda (n m)
+    (cond
+      [(zero? p) 
+       (cond
+         [(zero? m) n]
+         [else (add1 ((G 0) n (sub1 m)))])]
+      [(zero? (sub1 p)) 
+       (cond
+         [(zero? m) 0]
+         [else ((G 0) n ((G 1) n (sub1 m)))])]
+      [else 
+       (cond
+         [(zero? m) 1]
+         [else ((G (sub1 p)) n ((G p) n (sub1 m)))])]))))
 
-
-
-
-; 13
-(define lex
-  (lambda (e bound)
-    (match e
-      [`(lambda (,x) ,body) `(lambda ,[lex body (cons x bound)])]
-      [`(,rator ,rand) `(,[lex rator bound] ,[lex rand bound])]
-      [`,y (if (not (memv y bound)) y `(var ,[index-of bound y]))])))
-
-(display (lex '(lambda (x) x) '()))
-(newline); (lambda (var 0))
-
-     
-(display (lex '(lambda (y) (lambda (x) y)) '()))
-(newline); (lambda (lambda (var 1)))
-(display (lex '(lambda (y) (lambda (x) (x y))) '()))
-(newline); (lambda (lambda ((var 0) (var 1))))
-(display (lex '(lambda (x) (lambda (x) (x x))) '()))
-(newline); (lambda (lambda ((var 0) (var 0))))
-(display (lex '(lambda (x) (lambda (x) (y x))) '()))
-(newline); (lambda (lambda (y (var 0))))
-(display (lex '(lambda (y) ((lambda (x) (x y)) (lambda (c) (lambda (d) (y c))))) '()))
-(newline); (lambda ((lambda ((var 0) (var 1))) (lambda (lambda ((var 2) (var 1))))))
-(display (lex '(lambda (a)
-          (lambda (b)
-            (lambda (c)
-              (lambda (a)
-                (lambda (b)
-                  (lambda (d)
-                    (lambda (a)
-                      (lambda (e)
-                        (((((a b) c) d) e) a))))))))) 
-       '()))
-(newline)
-; (lambda
-;   (lambda
-;     (lambda
-;       (lambda
-;         (lambda
-;           (lambda
-;             (lambda
-;               (lambda
-;                 ((((((var 1) (var 3)) (var 5)) (var 2)) (var 0)) (var 1))))))))))
-
-(display (lex '(lambda (a)
-          (lambda (b)
-      	    (lambda (c)
-	            (lambda (w)
-	              (lambda (x)
-            		  (lambda (y)
-		                ((lambda (a)
-		                  (lambda (b)
-                			 (lambda (c)
-                			   (((((a b) c) w) x) y))))
-		                 (lambda (w)
-            		       (lambda (x)
-			                   (lambda (y)
-                  			   (((((a b) c) w) x) y))))))))))) 
-       '()))
-(newline)
-; (lambda 
-;   (lambda 
-;     (lambda 
-;       (lambda 
-;       	(lambda 
-;           (lambda 
-;             ((lambda
-;               (lambda
-;                 (lambda
-;                   ((((((var 2) (var 1)) (var 0)) (var 5)) (var 4)) (var 3)))))
-;             (lambda
-;               (lambda
-;                 (lambda
-;                   ((((((var 8) (var 7)) (var 6)) (var 2)) (var 1)) (var 0))))))))))))
-
-(display (lex '(lambda (a)
-          (lambda (b)
-            (lambda (c)
-              (lambda (w)
-                (lambda (x)
-                  (lambda (y)
-                    ((lambda (a)
-                      (lambda (b)
-                        (lambda (c)
-                          (((((a b) c) w) x) y))))
-                    (lambda (w)
-                      (lambda (x)
-                        (lambda (y)
-                          (((((a b) c) w) h) y))))))))))) 
-       '()))
-(newline)
-; '(lambda 
-;    (lambda
-;      (lambda 
-;        (lambda
-;          (lambda 
-;            (lambda
-;              ((lambda 
-;                 (lambda 
-;                   (lambda ((((((var 2) (var 1)) (var 0)) (var 5)) (var 4)) (var 3)))))
-;               (lambda 
-;                 (lambda 
-;                   (lambda ((((((var 8) (var 7)) (var 6)) (var 2)) h) (var 0))))))))))))
+(define G
+  (lambda (p)
+    (lambda (n m)
+      (cond
+        [(zero? m)
+         (cond
+           [(zero? p) n]
+           [(zero? (sub1 p)) 0]
+           [else 1])]
+        [else
+         (cond
+           [(zero? p) (add1 ((G 0) n (sub1 m)))]
+           [else ((G (sub1 p)) n ((G p) n (sub1 m)))])]))))
+(define +o (G 0))
+(define *o (G 1))
+(define ^o (G 2))
+(println (+o 2 3))
+(println (*o 2 3))
+(println (^o 2 3))
+(println ((G 3) 2 3))
+(println ((G 3) 3 2))
 
 
 ; 14
+(define t-fact
+  (lambda (n result)
+    (cond 
+      [(zero? n) result]
+      [else (t-fact (sub1 n) (* n result))])))
+
+(println (t-fact 5 1))
+
+; 15
+(define a-list `((c . ,(box 15)) (e . ,(box 'f)) (b . ,(box 'c)) (a . ,(box 'b))))
+(println a-list)
+(define walk-symbol-update
+  (lambda (s lst)
+    (let ([p (assv s lst)])
+      (if (false? p)
+          s
+          (let ([x (unbox (cdr p))])
+            (if (symbol? x)
+                (let ([r (walk-symbol-update x lst)])
+                  (set-box! (cdr p) r)
+                  r)
+                (unbox (cdr p))))))))
+
+(println (walk-symbol-update 'a a-list))
+(println a-list)
+(println (walk-symbol-update 'a a-list))
+(println a-list)
+
+
+; 16
+(define var-occurs-both?
+  (lambda (v E)
+    (define p
+      (lambda (e)
+        (match e
+          [`(lambda (,x) ,body) (if (eqv? x v) (cons #f #t) (p body))]
+          [`(,rator ,rand) 
+              (match-let ([(cons f1 b1) (p rator)]
+                          [(cons f2 b2) (p rand)])
+                (cons (or f1 f2) (or b1 b2)))]
+          [`,y (cons (eqv? y v) #f)])))
+    (p E)))
+
+(println (var-occurs-both? 'x '(lambda (x) (x (lambda (x) x)))))
+; (#f . #t) 
+(println (var-occurs-both? 'x '(x (lambda (x) x))))
+; (#t . #t)
+(println (var-occurs-both? 'x '(lambda (y) (x (lambda (x) x)))))
+; (#t . #t)
+(println (var-occurs-both? 'x '(lambda (x) (lambda (x) (x (lambda (x) x))))))
+; (#f . #t)
+(println (var-occurs-both? 'x '(lambda (x) (lambda (y) (lambda (x) (x (lambda (x) x)))))))
+; (#f . #t)
+(println (var-occurs-both? 'x '(lambda (y) (lambda (x) (lambda (z) (lambda (x) (x (lambda (x) x))))))))
+; (#f . #t)

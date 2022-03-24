@@ -1,5 +1,5 @@
-#lang racket/load
-(load "a2.rkt")
+#lang racket
+(require "a2.rkt")
 
 ;; Part 1
 (define lex

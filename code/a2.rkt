@@ -1,6 +1,5 @@
-#lang racket/load
-
-(load "a1.rkt")
+#lang racket
+(require "a1.rkt")
 
 ; 1
 (define list-ref

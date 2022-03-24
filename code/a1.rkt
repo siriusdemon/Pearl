@@ -1,5 +1,5 @@
-#lang racket/load
-(load "a0.rkt")
+#lang racket
+(require "a0.rkt")
 
 ; 1
 (define countdown 
